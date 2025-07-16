@@ -39,7 +39,7 @@
   .container {
     max-width: 700px;
     margin: 3rem auto;
-    background-color: white;
+    background-color: #101e22;
     border-radius: 0.75rem;
     box-shadow: var(--shadow-lg);
     padding: 2rem;
@@ -50,15 +50,15 @@
   .page-title {
     font-size: 1.75rem;
     font-weight: 700;
-    color: #510B76;
+    color: #FFFFFF;
     margin-bottom: 1.5rem;
-    border-bottom: 2px solid var(--primary-color);
+    border-bottom: 2px solid #FFFFFF;
     padding-bottom: 0.75rem;
     text-align: center;
   }
   
   .instructions {
-    color: var(--text-secondary);
+    color: #7c898b;
     text-align: center;
     margin-bottom: 2rem;
     font-size: 1.125rem;

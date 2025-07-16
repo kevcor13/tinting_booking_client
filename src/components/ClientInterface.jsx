@@ -14,19 +14,30 @@ function ClientInterface() {
   
   // Replace with your actual Google Apps Script Web App URL
   const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbxDd7vlYTXfnRCwdEziEF8zMwDdF5EshTcRMii_Lnv-hWH1AFqCLqU_5qgPFlHsNkNR5g/exec';
-  const OTHER_SCRIPT = 'https://script.google.com/macros/s/AKfycbxdknOrT4qtpA2x47LvePMVgHm9_-gzt9gh6ZUG_SzTchEOwvXTpRUWRr0o4TPHXZ5x/exec';
+  const OTHER_SCRIPT = 'https://script.google.com/macros/s/AKfycbyjrQKzvUsbdnde37E-Sml664oZdtXwlQk3dS4uj7imzzarCyW3B2eaoBCQ7Cd9_1-7/exec';
   // Convert time from 24-hour format to 12-hour format with AM/PM
   const formatTimeToStandard = (time) => {
-    // Check if time is already in standard format or needs conversion
-    if (time.includes('AM') || time.includes('PM')) {
-      return time;
+    if (!time) return '';
+    // The timeString will now be "HH:mm" directly from Google Apps Script.
+    // We can parse it into a Date object (using a dummy date) to use toLocaleTimeString
+    // or manually format it. Using a dummy date is often easier for locale-specific formatting.
+    try {
+      // Create a dummy date object to apply the time to, so toLocaleTimeString works correctly.
+      // Use a consistent date, e.g., today's date (July 15, 2025 in your current context)
+      // to avoid issues with different interpretations of "00:00" on certain dates.
+      const [hours, minutes] = time.split(':');
+      const dummyDate = new Date(2000, 0, 1, parseInt(hours, 10), parseInt(minutes, 10)); // Year, Month (0-indexed), Day, Hour, Minute
+
+      const options = {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true, // For AM/PM
+      };
+      return dummyDate.toLocaleTimeString('en-US', options);
+    } catch (e) {
+      console.error("Error formatting time:", e);
+      return time; // Fallback to original string if formatting fails
     }
-    
-    const [hours, minutes] = time.split(':');
-    const hour = parseInt(hours, 10);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    const standardHour = hour % 12 || 12; // Convert 0 to 12
-    return `${standardHour}:${minutes} ${ampm}`;
   };
 
   // Convert date to day of week
@@ -151,7 +162,7 @@ function ClientInterface() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          type: 'scholarship',
+          type: 'client',
           first_name: userInfo.firstName,
           to_email: userInfo.email,
           day_of_week: dayOfWeek,
@@ -300,9 +311,9 @@ function ClientInterface() {
   return (
     <div className="container">
       <div className="banner">
-          <img src="/CatholicStudiesPurple.png" alt="Guadalupe's Scholar Logo"/>
+          <img src="/Title.png" alt="Guadalupe's Scholar Logo"/>
       </div>
-      <h1 className="page-title">Guadalupe's Scholars Interview</h1>
+      <h1 className="page-title">Book your appointment</h1>
       
       {!selectedSlot ? (
         <div className="slots-container">
