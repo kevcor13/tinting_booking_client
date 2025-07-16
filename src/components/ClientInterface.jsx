@@ -6,25 +6,30 @@ function ClientInterface() {
   const { sheetId } = useParams();
   const [availableSlots, setAvailableSlots] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState(null);
-  const [userInfo, setUserInfo] = useState({ firstName: '', lastName: '', email: '', isScholarship: false });
+  const [userInfo, setUserInfo] = useState({ firstName: '', lastName: '', email: '', phoneNumber: '',isScholarship: false });
   const [bookingComplete, setBookingComplete] = useState(false);
+  const [selectedService, setSelectedService] = useState(''); // New state for selected service
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [refreshInterval, setRefreshInterval] = useState(null);
   
+  const services = [
+    { id: 'full-car-tint', name: 'Full Car Tint' },
+    { id: 'windshield-tint', name: 'Windshield Tint' },
+    { id: 'tint-removal', name: 'Tint Removal' },
+    // Add more services as needed
+  ];
+  
+  
   // Replace with your actual Google Apps Script Web App URL
   const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbxDd7vlYTXfnRCwdEziEF8zMwDdF5EshTcRMii_Lnv-hWH1AFqCLqU_5qgPFlHsNkNR5g/exec';
   const OTHER_SCRIPT = 'https://script.google.com/macros/s/AKfycbyjrQKzvUsbdnde37E-Sml664oZdtXwlQk3dS4uj7imzzarCyW3B2eaoBCQ7Cd9_1-7/exec';
-  // Convert time from 24-hour format to 12-hour format with AM/PM
+
+
+
   const formatTimeToStandard = (time) => {
     if (!time) return '';
-    // The timeString will now be "HH:mm" directly from Google Apps Script.
-    // We can parse it into a Date object (using a dummy date) to use toLocaleTimeString
-    // or manually format it. Using a dummy date is often easier for locale-specific formatting.
     try {
-      // Create a dummy date object to apply the time to, so toLocaleTimeString works correctly.
-      // Use a consistent date, e.g., today's date (July 15, 2025 in your current context)
-      // to avoid issues with different interpretations of "00:00" on certain dates.
       const [hours, minutes] = time.split(':');
       const dummyDate = new Date(2000, 0, 1, parseInt(hours, 10), parseInt(minutes, 10)); // Year, Month (0-indexed), Day, Hour, Minute
 
@@ -132,6 +137,8 @@ function ClientInterface() {
     const date = new Date(selectedSlot.date);
     const monthName = date.toLocaleDateString('en-US', { month: 'long' });
     const day = date.getDate();
+
+    const serviceName = services.find(s => s.id === selectedService)?.name || 'N/A';
     
     try {
       console.log("Sending owner email...");
@@ -147,7 +154,9 @@ function ClientInterface() {
           slot_date: formattedDate,
           slot_time: standardTime,
           client_name: fullName,
-          client_email: userInfo.email
+          client_email: userInfo.email,
+          client_phone: userInfo.phoneNumber,
+          service_booked: serviceName,
         }),
       });
       
@@ -168,7 +177,8 @@ function ClientInterface() {
           day_of_week: dayOfWeek,
           month: monthName,
           day: day,
-          time: standardTime
+          time: standardTime,
+          service_booked: serviceName,
         }),
       });
       console.log("Scholarship email sent successfully");
@@ -200,7 +210,8 @@ function ClientInterface() {
             status: 'Booked',
             client_name: `${userInfo.firstName} ${userInfo.lastName}`,
             client_email: userInfo.email,
-            zoom_option: userInfo.isScholarship ? 'Yes' : 'No',
+            client_phone: userInfo.phoneNumber,
+            service_booked: services.find(s => s.id === selectedService)?.name,
           }
         })
       });
@@ -356,7 +367,23 @@ function ClientInterface() {
           
           <form className="booking-form" onSubmit={handleBooking}>
             <h3>Please Complete Your Booking</h3>
-            
+            <div className="form-group">
+              <label htmlFor="service">Select Service</label>
+              <select
+                id="service"
+                required
+                value={selectedService}
+                onChange={(e) => setSelectedService(e.target.value)}
+                className="dropdown-select" // Add a class for styling
+              >
+                <option value="">-- Please choose a service --</option>
+                {services.map((service) => (
+                  <option key={service.id} value={service.id}>
+                    {service.name}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="form-group">
               <label htmlFor="firstName">First Name</label>
               <input
@@ -376,6 +403,17 @@ function ClientInterface() {
                 required
                 value={userInfo.lastName}
                 onChange={(e) => setUserInfo({...userInfo, lastName: e.target.value})}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="phoneNumber">Phone Number</label>
+              <input
+                type="tel" // Use type="tel" for phone numbers
+                id="phoneNumber"
+                required // Make it required if necessary
+                value={userInfo.phoneNumber}
+                onChange={(e) => setUserInfo({...userInfo, phoneNumber: e.target.value})}
+                placeholder="e.g., (123) 456-7890" // Add a placeholder for format guidance
               />
             </div>
             
