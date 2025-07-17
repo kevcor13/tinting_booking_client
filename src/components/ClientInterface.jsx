@@ -22,7 +22,7 @@ function ClientInterface() {
   
   
   // Replace with your actual Google Apps Script Web App URL
-  const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbxDd7vlYTXfnRCwdEziEF8zMwDdF5EshTcRMii_Lnv-hWH1AFqCLqU_5qgPFlHsNkNR5g/exec';
+  const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbxPNivlWj1CJFnmaBGjtMoUDE2JaoXPADswiILVVqdtHS7vHa9EU-twX0gisSUdCYiXow/exec';
   const OTHER_SCRIPT = 'https://script.google.com/macros/s/AKfycbyjrQKzvUsbdnde37E-Sml664oZdtXwlQk3dS4uj7imzzarCyW3B2eaoBCQ7Cd9_1-7/exec';
 
 
@@ -172,12 +172,11 @@ function ClientInterface() {
         },
         body: JSON.stringify({
           type: 'client',
-          first_name: userInfo.firstName,
-          to_email: userInfo.email,
-          day_of_week: dayOfWeek,
-          month: monthName,
-          day: day,
-          time: standardTime,
+          slot_date: formattedDate,
+          slot_time: standardTime,
+          client_name: fullName,
+          client_email: userInfo.email,
+          client_phone: userInfo.phoneNumber,
           service_booked: serviceName,
         }),
       });
