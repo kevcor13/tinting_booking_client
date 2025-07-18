@@ -14,9 +14,11 @@ function ClientInterface() {
   const [refreshInterval, setRefreshInterval] = useState(null);
   
   const services = [
-    { id: 'full-car-tint', name: 'Full Car Tint' },
+    { id: 'full-sedan-tint', name: 'Sedan Tint' },
+    { id: 'Suv-tint', name: 'SUV Tint' },
     { id: 'windshield-tint', name: 'Windshield Tint' },
     { id: 'tint-removal', name: 'Tint Removal' },
+    { id: 'eye_tint', name: 'Eye brow Tint' },
     // Add more services as needed
   ];
   
